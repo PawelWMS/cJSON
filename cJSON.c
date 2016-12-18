@@ -219,7 +219,7 @@ static const char *parse_number(cJSON *item, const char *num)
 }
 
 /* calculate the next largest power of 2 */
-static int pow2gt (int x)
+static size_t pow2gt (size_t x)
 {
     --x;
 
@@ -242,15 +242,15 @@ static int pow2gt (int x)
 typedef struct
 {
     char *buffer;
-    int length;
-    int offset;
+    size_t length;
+    size_t offset;
 } printbuffer;
 
 /* realloc printbuffer if necessary to have at least "needed" bytes more */
-static char* ensure(printbuffer *p, int needed)
+static char* ensure(printbuffer *p, size_t needed)
 {
     char *newbuffer = NULL;
-    int newsize = 0;
+    size_t newsize = 0;
     if (!p || !p->buffer)
     {
         return NULL;
@@ -283,7 +283,7 @@ static char* ensure(printbuffer *p, int needed)
 }
 
 /* calculate the new length of the string in a printbuffer */
-static int update(const printbuffer *p)
+static size_t update(const printbuffer *p)
 {
     char *str = NULL;
     if (!p || !p->buffer)
@@ -625,7 +625,7 @@ static const char *parse_string(cJSON *item, const char *str, const char **ep)
                         case 1:
                             /* depending on the length in bytes this determines the
                              * encoding ofthe first UTF8 byte */
-                            *--ptr2 = (uc | firstByteMark[len]);
+                            *--ptr2 = (char)(uc | firstByteMark[len]);
                     }
                     ptr2 += len;
                     break;
@@ -651,7 +651,7 @@ static char *print_string_ptr(const char *str, printbuffer *p)
     const char *ptr = NULL;
     char *ptr2 = NULL;
     char *out = NULL;
-    int len = 0;
+    size_t len = 0;
     bool flag = false;
     unsigned char token = '\0';
 
@@ -1088,10 +1088,10 @@ static char *print_array(const cJSON *item, int depth, bool fmt, printbuffer *p)
     char *out = NULL;
     char *ptr = NULL;
     char *ret = NULL;
-    int len = 5;
+    size_t len = 5;
     cJSON *child = item->child;
-    int numentries = 0;
-    int i = 0;
+    size_t numentries = 0;
+    size_t i = 0;
     bool fail = false;
     size_t tmplen = 0;
 
@@ -1351,11 +1351,11 @@ static char *print_object(const cJSON *item, int depth, bool fmt, printbuffer *p
     char *ptr = NULL;
     char *ret = NULL;
     char *str = NULL;
-    int len = 7;
-    int i = 0;
-    int j = 0;
+    size_t len = 7;
+    size_t i = 0;
+    size_t j = 0;
     cJSON *child = item->child;
-    int numentries = 0;
+    size_t numentries = 0;
     bool fail = false;
     size_t tmplen = 0;
 
@@ -1618,7 +1618,7 @@ static char *print_object(const cJSON *item, int depth, bool fmt, printbuffer *p
 }
 
 /* Get Array size/item / object item. */
-int    cJSON_GetArraySize(const cJSON *array)
+int cJSON_GetArraySize(const cJSON *array)
 {
     cJSON *c = array->child;
     int i = 0;
